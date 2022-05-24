@@ -2,8 +2,8 @@ package services
 
 import (
 	"errors"
-	"github.com/pedrofernandezmz/arq-software/ej-auth/domain"
-	"github.com/pedrofernandezmz/arq-software/ej-auth/utils"
+	"github.com/pedrofernandezmz/Proyecto_arq_software/domain"
+	"github.com/pedrofernandezmz/Proyecto_arq_software/utils"
 	"strings"
 )
 

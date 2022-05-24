@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pedrofernandezmz/arq-software/ej-auth/controllers"
+	"github.com/pedrofernandezmz/Proyecto_arq_software/controllers"
 	"github.com/gin-gonic/gin"
 )
 
