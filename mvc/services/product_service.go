@@ -49,6 +49,8 @@ func (s *productService) GetProducts() (dto.ProductsDto, e.ApiError) {
 		var productDto dto.ProductDto
 		productDto.Name = product.Name
 		productDto.Price = product.Price
+		productDto.Picture = product.Picture
+		productDto.IdCategory = product.IdCategory
 		productDto.Id = product.Id
 
 		productsDto = append(productsDto, productDto)
@@ -68,6 +70,8 @@ func (s *productService) GetSearch(word string) (dto.ProductsDto, e.ApiError) {
 		var productDto dto.ProductDto
 		productDto.Name = product.Name
 		productDto.Price = product.Price
+		productDto.Picture = product.Picture
+		productDto.IdCategory = product.IdCategory
 		productDto.Id = product.Id
 
 		productsDto = append(productsDto, productDto)
@@ -75,4 +79,3 @@ func (s *productService) GetSearch(word string) (dto.ProductsDto, e.ApiError) {
 
 	return productsDto, nil
 }
-
