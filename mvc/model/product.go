@@ -5,7 +5,8 @@ type Product struct {
 	Name  string  `gorm:"type:varchar(350);not null"`
 	Price int     `gorm:"type:integer;not null"`
 	Picture     string `gorm:"type:varchar(350);not null"`
-	IdCategory  int    `gorm:"type:integer;not null"` //chequear lo de integer
+	IdCategory  string    `gorm:"type:varchar(350);not null"`
+	//IdCategory  int    `gorm:"type:integer;not null"`
 	Description string `gorm:"type:varchar(350);not null"`
 }
 
