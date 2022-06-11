@@ -21,7 +21,8 @@ func mapUrls() {
 	//Products
 	router.GET("/product/:id", productController.GetProductById)
 	router.GET("/product", productController.GetProducts)
-	router.GET("/search/:word", productController.GetSearch)
+	router.GET("/search/:word", productController.GetSearch) //busca por palabra en el name
+	router.GET("/searchcategory/:category", productController.GetCategory) //busca por categoria
 
 	//Details
 	router.GET("/orderDetail/:id", orderDetailController.GetOrderDetailById)

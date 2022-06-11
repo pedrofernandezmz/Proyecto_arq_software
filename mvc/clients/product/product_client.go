@@ -38,3 +38,16 @@ func GetSearch(word string) model.Products {
 
 	return products
 }
+
+func GetCategory(category string) model.Products {
+	var products model.Products
+	//fmt.Println("%"+word+"%")
+	//fmt.Println(word)
+	// LIKE
+    Db.Where("id_category LIKE ?", "%"+category+"%").Find(&products)
+    // SELECT * FROM users WHERE name LIKE '%jin%';
+	//Db.Find(&products) //busca y guarda todo en products
+	log.Debug("Products: ", products)
+
+	return products
+}

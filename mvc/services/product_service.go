@@ -17,6 +17,7 @@ type productServiceInterface interface {
 	GetProductById(id int) (dto.ProductDto, e.ApiError)
 	GetProducts() (dto.ProductsDto, e.ApiError)
 	GetSearch(word string) (dto.ProductsDto, e.ApiError)
+	GetCategory(category string) (dto.ProductsDto, e.ApiError)
 }
 
 var (
@@ -64,6 +65,27 @@ func (s *productService) GetSearch(word string) (dto.ProductsDto, e.ApiError) {
 	//fmt.Println(word)
 
 	var products model.Products = productCliente.GetSearch(word)
+	var productsDto dto.ProductsDto
+
+	for _, product := range products {
+		var productDto dto.ProductDto
+		productDto.Name = product.Name
+		productDto.Price = product.Price
+		productDto.Picture = product.Picture
+		productDto.IdCategory = product.IdCategory
+		productDto.Id = product.Id
+
+		productsDto = append(productsDto, productDto)
+	}
+
+	return productsDto, nil
+}
+
+func (s *productService) GetCategory(category string) (dto.ProductsDto, e.ApiError) {
+
+	//fmt.Println(word)
+
+	var products model.Products = productCliente.GetCategory(category)
 	var productsDto dto.ProductsDto
 
 	for _, product := range products {

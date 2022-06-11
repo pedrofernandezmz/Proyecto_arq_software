@@ -46,3 +46,17 @@ func GetSearch(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, productsDto)
 }
+
+func GetCategory(c *gin.Context) {
+	log.Debug("Categoria a buscar: " + c.Param("category"))
+	//fmt.Println(c.Param("word"))
+	category := c.Param("category") //se pasa el id de array a int
+	//fmt.Println(word)
+	var productsDto dto.ProductsDto
+	productsDto, err := service.ProductService.GetCategory(category) //delega
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, productsDto)
+}
