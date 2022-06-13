@@ -1,14 +1,10 @@
 package model
 
-import (
-	"time"
-)
-
 type Order struct {
-	Id         int       `gorm:"primaryKey"`
-	MontoFinal float32   `gorm:"type:decimal(60,4);not null"`
-	Fecha      time.Time `gorm:"not null"`
-	IdUser int `gorm:"type:integer;not null"`
+	OrderId    int     `gorm:"primaryKey;AUTO_INCREMENT"`
+	UserId     int     `gorm:"type:int"`
+	Date       string  `gorm:"type:date;not null;"`
+	Total      float32 `gorm:"type:decimal;not null;"`
 }
 
 type Orders []Order

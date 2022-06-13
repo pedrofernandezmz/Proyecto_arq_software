@@ -1,9 +1,8 @@
 package model
 
 type Category struct {
-	Id          int    `gorm:"primaryKey"`
-	Name        string `gorm:"varchar(150);not null"`
-	Description string `gorm:"varchar(350);not null"`
+	CategoryId  int    `gorm:"primaryKey;AUTO_INCREMENT"`
+	Name        string `gorm:"type:varchar(100)"`
 }
 
 type Categories []Category

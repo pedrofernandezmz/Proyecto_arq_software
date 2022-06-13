@@ -1,23 +1,20 @@
 package services
 
-//lugar donde yo defino los metodos que mi clase va a responder (Interfaz de objetos)
-//Se puede reutilizar
 import (
-	productCliente "mvc/clients/product" //DAO
+	productClient "mvc/clients/product"
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
-	//"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type productService struct{}
 
 type productServiceInterface interface {
-	//siempre devuelve dto o error
 	GetProductById(id int) (dto.ProductDto, e.ApiError)
 	GetProducts() (dto.ProductsDto, e.ApiError)
-	GetSearch(word string) (dto.ProductsDto, e.ApiError)
-	GetCategory(category string) (dto.ProductsDto, e.ApiError)
+	GetProductsByCategoryId(id int) (dto.ProductsDto, e.ApiError)
 }
 
 var (
@@ -30,74 +27,67 @@ func init() {
 
 func (s *productService) GetProductById(id int) (dto.ProductDto, e.ApiError) {
 
-	var product model.Product = productCliente.GetProductById(id) //objeto de la DB, a traves del DAO
+	var product model.Product = productClient.GetProductById(id)
 	var productDto dto.ProductDto
 
-	if product.Id == 0 {
+	if product.ProductId < 0 {
 		return productDto, e.NewBadRequestApiError("product not found")
 	}
+
+	productDto.ProductId = product.ProductId
+	productDto.Category, _ = CategoryService.GetCategoryById(product.CategoryId)
 	productDto.Name = product.Name
-	productDto.Id = product.Id
+	//productDto.Description = product.Description
+	productDto.Price = product.Price
+	//productDto.CurrencyId = product.CurrencyId
+	//productDto.Stock = product.Stock
+	productDto.Picture = product.Picture
+
 	return productDto, nil
 }
 
 func (s *productService) GetProducts() (dto.ProductsDto, e.ApiError) {
 
-	var products model.Products = productCliente.GetProducts()
+	var products model.Products = productClient.GetProducts()
 	var productsDto dto.ProductsDto
 
 	for _, product := range products {
 		var productDto dto.ProductDto
+		productDto.ProductId = product.ProductId
+		productDto.Category, _ = CategoryService.GetCategoryById(product.CategoryId)
 		productDto.Name = product.Name
+		//productDto.Description = product.Description
 		productDto.Price = product.Price
+		//productDto.CurrencyId = product.CurrencyId
+		//productDto.Stock = product.Stock
 		productDto.Picture = product.Picture
-		productDto.IdCategory = product.IdCategory
-		productDto.Id = product.Id
 
 		productsDto = append(productsDto, productDto)
 	}
 
+	log.Debug(productsDto)
 	return productsDto, nil
 }
 
-func (s *productService) GetSearch(word string) (dto.ProductsDto, e.ApiError) {
+func (s *productService) GetProductsByCategoryId(id int) (dto.ProductsDto, e.ApiError) {
 
-	//fmt.Println(word)
-
-	var products model.Products = productCliente.GetSearch(word)
+	var products model.Products = productClient.GetProductsByCategoryId(id)
 	var productsDto dto.ProductsDto
 
 	for _, product := range products {
 		var productDto dto.ProductDto
+		productDto.ProductId = product.ProductId
+		productDto.Category, _ = CategoryService.GetCategoryById(id)
 		productDto.Name = product.Name
+		//productDto.Description = product.Description
 		productDto.Price = product.Price
+		//productDto.CurrencyId = product.CurrencyId
+		//productDto.Stock = product.Stock
 		productDto.Picture = product.Picture
-		productDto.IdCategory = product.IdCategory
-		productDto.Id = product.Id
 
 		productsDto = append(productsDto, productDto)
 	}
 
-	return productsDto, nil
-}
-
-func (s *productService) GetCategory(category string) (dto.ProductsDto, e.ApiError) {
-
-	//fmt.Println(word)
-
-	var products model.Products = productCliente.GetCategory(category)
-	var productsDto dto.ProductsDto
-
-	for _, product := range products {
-		var productDto dto.ProductDto
-		productDto.Name = product.Name
-		productDto.Price = product.Price
-		productDto.Picture = product.Picture
-		productDto.IdCategory = product.IdCategory
-		productDto.Id = product.Id
-
-		productsDto = append(productsDto, productDto)
-	}
-
+	log.Debug(productsDto)
 	return productsDto, nil
 }

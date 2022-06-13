@@ -1,18 +1,16 @@
 package services
 
-//lugar donde yo defino los metodos que mi clase va a responder (Interfaz de objetos)
-//Se puede reutilizar
 import (
-	categoryCliente "mvc/clients/category" //DAO
+	categoryClient "mvc/clients/category"
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type categoryService struct{}
 
 type categoryServiceInterface interface {
-	//siempre devuelve dto o error
 	GetCategoryById(id int) (dto.CategoryDto, e.ApiError)
 	GetCategories() (dto.CategoriesDto, e.ApiError)
 }
@@ -27,31 +25,32 @@ func init() {
 
 func (s *categoryService) GetCategoryById(id int) (dto.CategoryDto, e.ApiError) {
 
-	var category model.Category = categoryCliente.GetCategoryById(id) //objeto de la DB, a traves del DAO
+	var category model.Category = categoryClient.GetCategoryById(id)
 	var categoryDto dto.CategoryDto
 
-	if category.Id == 0 {
-		return categoryDto, e.NewBadRequestApiError("category not found")
+	if category.CategoryId < 0 {
+		return categoryDto, e.NewBadRequestApiError("Category not found")
 	}
-	categoryDto.Descripcion = category.Description
-	//	categoryDto.IdCategory = category.Id
-	categoryDto.Nombre = category.Name
+	//categoryDto.Description = category.Description
+	categoryDto.Name = category.Name
+	categoryDto.CategoryId = category.CategoryId
 	return categoryDto, nil
 }
 
 func (s *categoryService) GetCategories() (dto.CategoriesDto, e.ApiError) {
 
-	var categories model.Categories = categoryCliente.GetCategories()
+	var categories model.Categories = categoryClient.GetCategories()
 	var categoriesDto dto.CategoriesDto
 
 	for _, category := range categories {
 		var categoryDto dto.CategoryDto
-		categoryDto.Descripcion = category.Description
-		categoryDto.IdCategory = category.Id
-		categoryDto.Nombre = category.Name
+		//categoryDto.Description = category.Description
+		categoryDto.Name = category.Name
+		categoryDto.CategoryId = category.CategoryId
 
 		categoriesDto = append(categoriesDto, categoryDto)
 	}
 
+	log.Debug(categoriesDto)
 	return categoriesDto, nil
 }

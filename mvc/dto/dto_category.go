@@ -1,9 +1,8 @@
 package dto
 
 type CategoryDto struct {
-	IdCategory  int    `json:"id_category"`
-	Nombre      string `json:"nombre"`
-	Descripcion string `json:"descripcion"`
+	CategoryId  int    `json:"category_id"`
+	Name        string `json:"name"`
 }
 
 type CategoriesDto []CategoryDto

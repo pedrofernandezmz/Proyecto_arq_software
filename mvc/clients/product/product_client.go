@@ -4,50 +4,35 @@ import (
 	"mvc/model"
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
-	//"fmt"
-	//"strconv"
 )
 
-var Db *gorm.DB //ORM para la base de datos
+var Db *gorm.DB
 
 func GetProductById(id int) model.Product {
 	var product model.Product
-	Db.Where("id = ?", id).First(&product) //traduccion y seteo en product
+	Db.Where("product_id = ?", id).First(&product)
 	log.Debug("Product: ", product)
-
 	return product
 }
 
 func GetProducts() model.Products {
 	var products model.Products
-	Db.Find(&products) //busca y guarda todo en products
+	Db.Find(&products)
 	log.Debug("Products: ", products)
-
 	return products
 }
 
-func GetSearch(word string) model.Products {
-	var products model.Products
-	//fmt.Println("%"+word+"%")
-	//fmt.Println(word)
-	// LIKE
-    Db.Where("name LIKE ?", "%"+word+"%").Find(&products)
-    // SELECT * FROM users WHERE name LIKE '%jin%';
-	//Db.Find(&products) //busca y guarda todo en products
-	log.Debug("Products: ", products)
-
-	return products
+func RemoveStock(id int, amount int) model.Product {
+	var product model.Product
+	Db.Where("product_id = ?", id).First(&product)
+	//Db.Model(&product).Where("product_id = ?", id).Update("stock", product.Stock-amount)
+	log.Debug("Product: ", product)
+	return product
 }
 
-func GetCategory(category string) model.Products {
+func GetProductsByCategoryId(id int) model.Products {
 	var products model.Products
-	//fmt.Println("%"+word+"%")
-	//fmt.Println(word)
-	// LIKE
-    Db.Where("id_category LIKE ?", "%"+category+"%").Find(&products)
-    // SELECT * FROM users WHERE name LIKE '%jin%';
-	//Db.Find(&products) //busca y guarda todo en products
-	log.Debug("Products: ", products)
-
+	Db.Where("category_id = ?", id).Find(&products)
+	log.Debug("Products", products)
 	return products
 }

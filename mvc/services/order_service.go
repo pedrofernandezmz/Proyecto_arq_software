@@ -1,24 +1,20 @@
 package services
 
-//lugar donde yo defino los metodos que mi clase va a responder (Interfaz de objetos)
-//Se puede reutilizar
 import (
-	orderCliente "mvc/clients/order" //DAO
+	orderClient "mvc/clients/order"
+	productClient "mvc/clients/product"
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
 	"time"
-	//"mvc/utils/modeladto"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type orderService struct{}
 
 type orderServiceInterface interface {
-	//siempre devuelve dto o error
-	GetOrderById(id int) (dto.OrderDto, e.ApiError)
-	GetOrders() (dto.OrdersDto, e.ApiError)
-	InsertOrder(orderDto dto.OrderDto) (dto.OrderDto, e.ApiError)
-	GetOrdersByIdUser(idUser int) (dto.OrdersResponseDto, e.ApiError)
+	InsertOrder(orderDto dto.OrderInsertDto) (dto.OrderResponseDto, e.ApiError)
 }
 
 var (
@@ -29,81 +25,38 @@ func init() {
 	OrderService = &orderService{}
 }
 
-func (s *orderService) GetOrderById(id int) (dto.OrderDto, e.ApiError) {
-
-	var order model.Order = orderCliente.GetOrderById(id) //objeto de la DB, a traves del DAO
-	var orderDto dto.OrderDto
-
-	if order.Id == 0 {
-		return orderDto, e.NewBadRequestApiError("order not found")
-	}
-	orderDto.Id = order.Id
-	orderDto.Fecha = order.Fecha
-	orderDto.MontoFinal = order.MontoFinal
-	orderDto.IdUsuario = order.IdUser
-	//orderDto.OrderDetail = order.OrderDetail --------- creo que no va
-	//orderDto.Usuario = order.Usuario
-
-	return orderDto, nil
-}
-
-func (s *orderService) GetOrders() (dto.OrdersDto, e.ApiError) {
-
-	var orders model.Orders = orderCliente.GetOrders()
-	var ordersDto dto.OrdersDto
-
-	for _, order := range orders {
-		var orderDto dto.OrderDto
-
-		orderDto.Id = order.Id
-		//orderDto.Estado = order.Estado
-		orderDto.Fecha = order.Fecha
-		orderDto.MontoFinal = order.MontoFinal
-		orderDto.IdUsuario = order.IdUser
-		//orderDto.OrderDetail = order.OrderDetail ---------
-		//orderDto.Usuario = order.Usuario -----------------manejar
-
-		ordersDto = append(ordersDto, orderDto)
-	}
-
-	return ordersDto, nil
-}
-
-func (s *orderService) InsertOrder(orderDto dto.OrderDto) (dto.OrderDto, e.ApiError) {
+func (s *orderService) InsertOrder(orderInsertDto dto.OrderInsertDto) (dto.OrderResponseDto, e.ApiError) {
 
 	var order model.Order
-
-	order.Fecha = time.Now()
-	order.MontoFinal = orderDto.MontoFinal
-	order.IdUser = orderDto.IdUsuario
-
-	order = orderCliente.InsertOrder(order)
-
-	orderDto.Id = order.Id
-
-	return orderDto, nil
-}
-
-//Buscar orden por IDuser
-
-func (s *orderService) GetOrdersByIdUser(idUser int) (dto.OrdersResponseDto, e.ApiError) {
-
-	var orders model.Orders = orderCliente.GetOrdersByIdUser(idUser) //objeto de la DB, a traves del DAO
-	var ordersResponseDto dto.OrdersResponseDto
-
-	/*
-		if (size(orders) == 0) {
-			return orderResponseDto, e.NewBadRequestApiError("order not found")
+	var total float32
+	var orderResponseDto dto.OrderResponseDto
+	total = 0
+	order.UserId = orderInsertDto.UserId
+	order.Date = time.Now().Format("2006.01.02 15:04:05")
+	for i := 0; i < len(orderInsertDto.OrderDetails); i++ {
+		//var product model.Product
+		detail := orderInsertDto.OrderDetails[i]
+		//product = productClient.GetProductById(detail.ProductId)
+		/*if product.Stock < detail.Quantity {
+			orderResponseDto.OrderId = -1
+			return orderResponseDto, e.NewConflictApiError("Not enough stock on product: " + product.Name)
 		}*/
-	for _, order := range orders {
-		var orderResponseDto dto.OrderResponseDto
 
-		orderResponseDto.Id = order.Id
-		orderResponseDto.Fecha = order.Fecha
-		orderResponseDto.MontoFinal = order.MontoFinal
+		total += (detail.Price * float32(detail.Quantity))
 
-		ordersResponseDto = append(ordersResponseDto, orderResponseDto)
 	}
 
-	return ordersResponseDto, nil
+	for i := 0; i < len(orderInsertDto.OrderDetails); i++ {
+		detail := orderInsertDto.OrderDetails[i]
+		productClient.RemoveStock(detail.ProductId, detail.Quantity)
+	}
+
+	order.Total = total
+
+	order = orderClient.InsertOrder(order)
+
+	orderResponseDto.OrderId = order.OrderId
+
+	log.Debug(order)
+	return orderResponseDto, nil
 }

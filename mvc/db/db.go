@@ -1,8 +1,7 @@
 package db
 
 import (
-	//product "mvc/clients/product"
-	addressClient "mvc/clients/address"
+	cartClient "mvc/clients/cart"
 	categoryClient "mvc/clients/category"
 	orderClient "mvc/clients/order"
 	orderDetailClient "mvc/clients/order_detail"
@@ -20,13 +19,13 @@ var (
 )
 
 func init() {
-	// Autorizaciones para la Base de Datos
+	//BASE DE DATOS
 	DBName := "Proyecto"
 	DBUser := "root"
 	DBPass := ""
-	DBHost := "127.0.0.1"
+	DBHost := "localhost"
 
-	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3306)/"+DBName+"?charset=utf8&parseTime=True") //ver puerto
+	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3306)/"+DBName+"?charset=utf8&parseTime=True")
 
 	if err != nil {
 		log.Info("Connection Failed to Open")
@@ -35,22 +34,19 @@ func init() {
 		log.Info("Connection Established")
 	}
 
-	// We need to add all CLients that we build
+	//SE AGREGAN LOS CLIENTS
 	userClient.Db = db
 	productClient.Db = db
-	addressClient.Db = db
-	categoryClient.Db = db
-	orderDetailClient.Db = db
 	orderClient.Db = db
+	orderDetailClient.Db = db
+	categoryClient.Db = db
+	cartClient.Db = db
+
 }
 
 func StartDbEngine() {
-	// We need to migrate all classes model.
-	db.AutoMigrate(&model.User{}) //se debe agreagar por cada carpeta del model
-	db.AutoMigrate(&model.Product{})
-	db.AutoMigrate(&model.Address{})
-	db.AutoMigrate(&model.Category{})
-	db.AutoMigrate(&model.OrderDetail{})
-	db.AutoMigrate(&model.Order{})
-	log.Info("Finishing Migration Database Tables")
+	//CLASES
+	db.AutoMigrate(&model.User{}, &model.Product{}, &model.Order{}, &model.OrderDetail{}, &model.Category{}, &model.Cart{})
+
+	log.Info("Finish Database Migration")
 }

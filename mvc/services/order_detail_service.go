@@ -1,21 +1,17 @@
 package services
 
-//lugar donde yo defino los metodos que mi clase va a responder (Interfaz de objetos)
-//Se puede reutilizar
 import (
-	orderDetailCliente "mvc/clients/order_detail" //DAO
+	orderDetailClient "mvc/clients/order_detail"
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type orderDetailService struct{}
 
 type orderDetailServiceInterface interface {
-	//siempre devuelve dto o error
-	GetOrderDetailById(id int) (dto.OrderDetailDto, e.ApiError)
-	GetOrderDetails() (dto.OrderDetailsDto, e.ApiError)
-	InsertOrderDetail(orderDetailDto dto.OrderDetailDto) (dto.OrderDetailDto, e.ApiError)
+	InsertDetail(orderDetailDto dto.OrderDetailInsertDto, orderId int) (dto.OrderDetailResponseDto, e.ApiError)
 }
 
 var (
@@ -26,61 +22,21 @@ func init() {
 	OrderDetailService = &orderDetailService{}
 }
 
-func (s *orderDetailService) GetOrderDetailById(id int) (dto.OrderDetailDto, e.ApiError) {
-
-	var orderDetail model.OrderDetail = orderDetailCliente.GetOrderDetailById(id) //objeto de la DB, a traves del DAO
-	var orderDetailDto dto.OrderDetailDto
-
-	if orderDetail.Id == 0 {
-		return orderDetailDto, e.NewBadRequestApiError("orderDetail not found")
-	}
-	orderDetailDto.Id = orderDetail.Id
-	orderDetailDto.Detalle = orderDetail.Detalle
-	orderDetailDto.Cantidad = orderDetail.Cantidad
-	orderDetailDto.PrecioUnitario = orderDetail.PrecioUnitario
-	orderDetailDto.Total = orderDetail.Total
-	orderDetailDto.IdOrder = orderDetail.IdOrder
-	orderDetailDto.IdProducto = orderDetail.IdProduct
-	//orderDetailDto.Producto = orderDetail.Producto ----------------Manejar
-	return orderDetailDto, nil
-}
-
-func (s *orderDetailService) GetOrderDetails() (dto.OrderDetailsDto, e.ApiError) {
-
-	var orderDetails model.OrderDetails = orderDetailCliente.GetOrderDetails()
-	var orderDetailsDto dto.OrderDetailsDto
-
-	for _, orderDetail := range orderDetails {
-		var orderDetailDto dto.OrderDetailDto
-		orderDetailDto.Id = orderDetail.Id
-		orderDetailDto.Detalle = orderDetail.Detalle
-		orderDetailDto.Cantidad = orderDetail.Cantidad
-		orderDetailDto.PrecioUnitario = orderDetail.PrecioUnitario
-		orderDetailDto.Total = orderDetail.Total
-		orderDetailDto.IdOrder = orderDetail.IdOrder
-		orderDetailDto.IdProducto = orderDetail.IdProduct
-		//orderDetailDto.Producto = orderDetail.Producto ----------------Manejar
-
-		orderDetailsDto = append(orderDetailsDto, orderDetailDto)
-	}
-
-	return orderDetailsDto, nil
-}
-
-func (s *orderDetailService) InsertOrderDetail(orderDetailDto dto.OrderDetailDto) (dto.OrderDetailDto, e.ApiError) {
+func (s *orderDetailService) InsertDetail(orderDetailDto dto.OrderDetailInsertDto, orderId int) (dto.OrderDetailResponseDto, e.ApiError) {
 
 	var orderDetail model.OrderDetail
+	orderDetail.OrderId = orderId
+	orderDetail.ProductId = orderDetailDto.ProductId
+	orderDetail.Quantity = orderDetailDto.Quantity
+	orderDetail.Name = orderDetailDto.Name
+	orderDetail.Price = orderDetailDto.Price
 
-	orderDetail.Detalle = orderDetailDto.Detalle
-	orderDetail.Cantidad = orderDetailDto.Cantidad
-	orderDetail.PrecioUnitario = orderDetailDto.PrecioUnitario
-	orderDetail.Total = orderDetailDto.PrecioUnitario * orderDetailDto.Cantidad
-	orderDetail.IdOrder = orderDetailDto.IdOrder
-	orderDetail.IdProduct = orderDetailDto.IdProducto
+	orderDetail = orderDetailClient.InsertOrderDetail(orderDetail)
 
-	orderDetail = orderDetailCliente.InsertOrderDetail(orderDetail)
+	var orderDetailResponseDto dto.OrderDetailResponseDto
+	orderDetailResponseDto.OrderDetailId = orderDetail.OrderDetailId
 
-	orderDetailDto.Id = orderDetail.Id
+	log.Debug(orderDetail)
 
-	return orderDetailDto, nil
+	return orderDetailResponseDto, nil
 }

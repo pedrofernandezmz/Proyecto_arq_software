@@ -1,24 +1,20 @@
 package services
 
-//lugar donde yo defino los metodos que mi clase va a responder (Interfaz de objetos)
-//Se puede reutilizar
 import (
-	userCliente "mvc/clients/user" //DAO
+	userClient "mvc/clients/user"
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
-
-	"github.com/dgrijalva/jwt-go"
+	log "github.com/sirupsen/logrus"
 )
 
 type userService struct{}
 
 type userServiceInterface interface {
-	//siempre devuelve dto o error
 	GetUserById(id int) (dto.UserDto, e.ApiError)
 	GetUsers() (dto.UsersDto, e.ApiError)
-
-	LoginUser(loginDto dto.LoginDto) (dto.TokenDto, e.ApiError)
+	InsertUser(userDto dto.UserDto) (dto.UserDto, e.ApiError)
+	Login(loginDto dto.LoginDto) (dto.LoginResponseDto, e.ApiError)
 }
 
 var (
@@ -31,30 +27,30 @@ func init() {
 
 func (s *userService) GetUserById(id int) (dto.UserDto, e.ApiError) {
 
-	var user model.User = userCliente.GetUserById(id) //objeto de la DB, a traves del DAO
+	var user model.User = userClient.GetUserById(id)
 	var userDto dto.UserDto
 
-	if user.Id == 0 {
+	if user.UserId < 0 {
 		return userDto, e.NewBadRequestApiError("user not found")
 	}
-	userDto.Name = user.Name
+	userDto.FirstName = user.FirstName
 	userDto.LastName = user.LastName
-	userDto.UserName = user.UserName
-	userDto.Id = user.Id
+	userDto.Username = user.Username
+	userDto.UserId = user.UserId
 	return userDto, nil
 }
 
 func (s *userService) GetUsers() (dto.UsersDto, e.ApiError) {
 
-	var users model.Users = userCliente.GetUsers()
+	var users model.Users = userClient.GetUsers()
 	var usersDto dto.UsersDto
 
 	for _, user := range users {
 		var userDto dto.UserDto
-		userDto.Name = user.Name
+		userDto.FirstName = user.FirstName
 		userDto.LastName = user.LastName
-		userDto.UserName = user.Name
-		userDto.Id = user.Id
+		userDto.Username = user.Username
+		userDto.UserId = user.UserId
 
 		usersDto = append(usersDto, userDto)
 	}
@@ -66,32 +62,33 @@ func (s *userService) InsertUser(userDto dto.UserDto) (dto.UserDto, e.ApiError) 
 
 	var user model.User
 
-	user.Name = userDto.Name
+	user.FirstName = userDto.FirstName
 	user.LastName = userDto.LastName
-	user.UserName = userDto.UserName
+	user.Username = userDto.Username
 	user.Password = userDto.Password
 
-	userDto.Id = user.Id
+	user = userClient.InsertUser(user)
+
+	userDto.UserId = user.UserId
 
 	return userDto, nil
 }
 
-var jwtKey = []byte("secret_key")
+func (s *userService) Login(loginDto dto.LoginDto) (dto.LoginResponseDto, e.ApiError) {
 
-func (s *userService) LoginUser(loginDto dto.LoginDto) (dto.TokenDto, e.ApiError) {
-	//var user model.User
-	var user model.User = userCliente.GetUserByUserName(loginDto.UserName) //objeto de la DB, a traves del DAO
-	//var userDto dto.UserDto
-	var tokenDto dto.TokenDto
+	var user model.User
 
-	if user.Id == 0 {
-		return tokenDto, e.NewBadRequestApiError("user not found")
+	user, err := userClient.GetUserByUsername(loginDto.Username)
+
+	var loginResponseDto dto.LoginResponseDto
+	loginResponseDto.UserId = -1
+	if err != nil {
+		return loginResponseDto, e.NewBadRequestApiError("Usuario no encontrado")
 	}
-
-	if user.Password == loginDto.Password {
-		token := jwt.New(jwt.SigningMethodHS256)
-		tokenString, _ := token.SignedString(jwtKey)
-		tokenDto.Token = tokenString
+	if user.Password != loginDto.Password {
+		return loginResponseDto, e.NewUnauthorizedApiError("Contraseña incorrecta")
 	}
-	return tokenDto, nil
+	loginResponseDto.UserId = user.UserId
+	log.Debug(loginResponseDto)
+	return loginResponseDto, nil
 }

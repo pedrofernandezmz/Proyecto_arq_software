@@ -1,13 +1,5 @@
 package dto
 
-import (
-	"time"
-)
-
 type OrderResponseDto struct {
-	Id         int     `json:"id_order"`
-	MontoFinal float32 `json:"monto_final"`
-	Fecha      time.Time
+	OrderId int `json:"order_id"`
 }
-
-type OrdersResponseDto []OrderResponseDto

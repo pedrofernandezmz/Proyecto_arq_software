@@ -1,13 +1,11 @@
 package model
 
 type Product struct {
-	Id    int     `gorm:"primaryKey"`
-	Name  string  `gorm:"type:varchar(350);not null"`
-	Price int     `gorm:"type:integer;not null"`
-	Picture     string `gorm:"type:varchar(350);not null"`
-	IdCategory  string    `gorm:"type:varchar(350);not null"`
-	//IdCategory  int    `gorm:"type:integer;not null"`
-	Description string `gorm:"type:varchar(350);not null"`
+	ProductId   int     `gorm:"primaryKey;AUTO_INCREMENT"`
+	CategoryId  int     `gorm:"foreignKey:CategoryId"`
+	Name        string  `gorm:"type:varchar(100);not null;unique;"`
+	Price       float32 `gorm:"type:decimal;not null;"`
+	Picture     string  `gorm:"type:varchar(100);not null;"`
 }
 
 type Products []Product

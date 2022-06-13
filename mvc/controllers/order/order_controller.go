@@ -4,65 +4,40 @@ import (
 	"mvc/dto"
 	service "mvc/services"
 	"net/http"
-	"strconv"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
 func GetOrderById(c *gin.Context) {
-	log.Debug("Order id to load: " + c.Param("id"))
-
-	id, _ := strconv.Atoi(c.Param("id")) //se pasa el id de array a int
+	log.Debug("Order id: " + c.Param("id"))
 	var orderDto dto.OrderDto
-
-	orderDto, err := service.OrderService.GetOrderById(id) //delega el trabajo al service
-
-	if err != nil {
-		c.JSON(err.Status(), err)
-		return
-	}
 	c.JSON(http.StatusOK, orderDto)
 }
 
-func GetOrders(c *gin.Context) {
-	var ordersDto dto.OrdersDto
-	ordersDto, err := service.OrderService.GetOrders() //delega
-
-	if err != nil {
-		c.JSON(err.Status(), err)
-		return
-	}
-
-	c.JSON(http.StatusOK, ordersDto)
-}
-
 func OrderInsert(c *gin.Context) {
-	var orderDto dto.OrderDto
-	err := c.BindJSON(&orderDto) //marshall, convierte de json a orderDto
-	// Error Parsing json param
+	var orderInsertDto dto.OrderInsertDto
+	var orderResponseDto dto.OrderResponseDto
+	err := c.BindJSON(&orderInsertDto)
+	log.Debug(orderInsertDto)
 	if err != nil {
 		log.Error(err.Error())
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	orderDto, er := service.OrderService.InsertOrder(orderDto) //delega, simpre envia dto
-	// Error del Insert
+	orderResponseDto, er := service.OrderService.InsertOrder(orderInsertDto)
 	if er != nil {
-		c.JSON(er.Status(), er)
+		log.Error(er.Error())
+		c.JSON(er.Status(), er.Error())
 		return
 	}
-	c.JSON(http.StatusCreated, orderDto)
-}
+	for i := 0; i < len(orderInsertDto.OrderDetails); i++ {
+		_, e := service.OrderDetailService.InsertDetail(orderInsertDto.OrderDetails[i], orderResponseDto.OrderId)
+		if e != nil {
+			log.Error(err.Error())
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+	}
 
-//Buscar orden por userID
-func GetOrdersByIdUser(c *gin.Context) {
-	log.Debug("Order id to load: " + c.Param("idUser"))
-	idUser, _ := strconv.Atoi(c.Param("idUser")) //se pasa el id de array a int
-	var ordersResponseDto dto.OrdersResponseDto
-	ordersResponseDto, err := service.OrderService.GetOrdersByIdUser(idUser) //delega el trabajo al service
-	if err != nil {
-		c.JSON(err.Status(), err)
-		return
-	}
-	c.JSON(http.StatusOK, ordersResponseDto)
+	c.JSON(http.StatusCreated, orderInsertDto)
 }
