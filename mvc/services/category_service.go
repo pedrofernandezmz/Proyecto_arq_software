@@ -5,6 +5,7 @@ import (
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -31,7 +32,7 @@ func (s *categoryService) GetCategoryById(id int) (dto.CategoryDto, e.ApiError) 
 	if category.CategoryId < 0 {
 		return categoryDto, e.NewBadRequestApiError("Category not found")
 	}
-	//categoryDto.Description = category.Description
+	categoryDto.Description = category.Description
 	categoryDto.Name = category.Name
 	categoryDto.CategoryId = category.CategoryId
 	return categoryDto, nil
@@ -44,7 +45,7 @@ func (s *categoryService) GetCategories() (dto.CategoriesDto, e.ApiError) {
 
 	for _, category := range categories {
 		var categoryDto dto.CategoryDto
-		//categoryDto.Description = category.Description
+		categoryDto.Description = category.Description
 		categoryDto.Name = category.Name
 		categoryDto.CategoryId = category.CategoryId
 

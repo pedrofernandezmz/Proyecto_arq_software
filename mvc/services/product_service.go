@@ -37,10 +37,10 @@ func (s *productService) GetProductById(id int) (dto.ProductDto, e.ApiError) {
 	productDto.ProductId = product.ProductId
 	productDto.Category, _ = CategoryService.GetCategoryById(product.CategoryId)
 	productDto.Name = product.Name
-	//productDto.Description = product.Description
+	productDto.Description = product.Description
 	productDto.Price = product.Price
-	//productDto.CurrencyId = product.CurrencyId
-	//productDto.Stock = product.Stock
+	productDto.CurrencyId = product.CurrencyId
+	productDto.Stock = product.Stock
 	productDto.Picture = product.Picture
 
 	return productDto, nil
@@ -56,10 +56,10 @@ func (s *productService) GetProducts() (dto.ProductsDto, e.ApiError) {
 		productDto.ProductId = product.ProductId
 		productDto.Category, _ = CategoryService.GetCategoryById(product.CategoryId)
 		productDto.Name = product.Name
-		//productDto.Description = product.Description
+		productDto.Description = product.Description
 		productDto.Price = product.Price
-		//productDto.CurrencyId = product.CurrencyId
-		//productDto.Stock = product.Stock
+		productDto.CurrencyId = product.CurrencyId
+		productDto.Stock = product.Stock
 		productDto.Picture = product.Picture
 
 		productsDto = append(productsDto, productDto)
@@ -79,10 +79,10 @@ func (s *productService) GetProductsByCategoryId(id int) (dto.ProductsDto, e.Api
 		productDto.ProductId = product.ProductId
 		productDto.Category, _ = CategoryService.GetCategoryById(id)
 		productDto.Name = product.Name
-		//productDto.Description = product.Description
+		productDto.Description = product.Description
 		productDto.Price = product.Price
-		//productDto.CurrencyId = product.CurrencyId
-		//productDto.Stock = product.Stock
+		productDto.CurrencyId = product.CurrencyId
+		productDto.Stock = product.Stock
 		productDto.Picture = product.Picture
 
 		productsDto = append(productsDto, productDto)

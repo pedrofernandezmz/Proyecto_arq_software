@@ -9,6 +9,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+//FUNCIONES CATEGORIA
+
 func GetCategoryById(c *gin.Context) {
 	log.Debug("Category id: " + c.Param("id"))
 	id, _ := strconv.Atoi(c.Param("id"))

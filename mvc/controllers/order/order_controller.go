@@ -8,9 +8,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+//FUNCIONES ORDENES
+
 func GetOrderById(c *gin.Context) {
 	log.Debug("Order id: " + c.Param("id"))
+
 	var orderDto dto.OrderDto
+
 	c.JSON(http.StatusOK, orderDto)
 }
 
@@ -18,12 +22,15 @@ func OrderInsert(c *gin.Context) {
 	var orderInsertDto dto.OrderInsertDto
 	var orderResponseDto dto.OrderResponseDto
 	err := c.BindJSON(&orderInsertDto)
+
 	log.Debug(orderInsertDto)
+
 	if err != nil {
 		log.Error(err.Error())
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
 	orderResponseDto, er := service.OrderService.InsertOrder(orderInsertDto)
 	if er != nil {
 		log.Error(er.Error())

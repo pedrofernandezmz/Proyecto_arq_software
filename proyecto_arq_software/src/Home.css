@@ -118,7 +118,7 @@
 
 .topnav {
   overflow: hidden;
-  background-color: #090909;
+  background-color: rgb(255, 255, 0);
   text-align: right;
   position: sticky;
   top: 0;
@@ -137,7 +137,7 @@
 /* Change the color of links on hover */
 .topnav a:hover {
   background-color: #ddd;
-  color: black;
+  color: rgb(255, 255, 0);
   cursor: pointer;
 }
 
@@ -168,7 +168,7 @@
 }
 
 .topnav .cartNumber{
-  color: black;
+  color: rgb(255, 255, 0);
   font-weight: bold;
   text-align:center;
   border: 2px solid rgb(0, 0, 0);

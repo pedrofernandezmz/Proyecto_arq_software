@@ -2,11 +2,14 @@ package orderDetail
 
 import (
 	"mvc/model"
+
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )
 
 var Db *gorm.DB
+
+//FUNCIONES DETALLE DE ORDENES
 
 func GetOrderDetailById(id int) model.OrderDetail {
 	var orderDetail model.OrderDetail

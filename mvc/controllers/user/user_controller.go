@@ -5,9 +5,12 @@ import (
 	service "mvc/services"
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
+
+//USUARIO
 
 func GetUserById(c *gin.Context) {
 	log.Debug("User id: " + c.Param("id"))
@@ -23,6 +26,7 @@ func GetUserById(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
+
 	var usersDto dto.UsersDto
 	usersDto, err := service.UserService.GetUsers()
 	if err != nil {

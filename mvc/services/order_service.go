@@ -34,13 +34,13 @@ func (s *orderService) InsertOrder(orderInsertDto dto.OrderInsertDto) (dto.Order
 	order.UserId = orderInsertDto.UserId
 	order.Date = time.Now().Format("2006.01.02 15:04:05")
 	for i := 0; i < len(orderInsertDto.OrderDetails); i++ {
-		//var product model.Product
+		var product model.Product
 		detail := orderInsertDto.OrderDetails[i]
-		//product = productClient.GetProductById(detail.ProductId)
-		/*if product.Stock < detail.Quantity {
+		product = productClient.GetProductById(detail.ProductId)
+		if product.Stock < detail.Quantity {
 			orderResponseDto.OrderId = -1
 			return orderResponseDto, e.NewConflictApiError("Not enough stock on product: " + product.Name)
-		}*/
+		}
 
 		total += (detail.Price * float32(detail.Quantity))
 
@@ -52,6 +52,7 @@ func (s *orderService) InsertOrder(orderInsertDto dto.OrderInsertDto) (dto.Order
 	}
 
 	order.Total = total
+	order.CurrencyId = "ARS"
 
 	order = orderClient.InsertOrder(order)
 

@@ -5,6 +5,7 @@ import (
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -28,6 +29,7 @@ func (s *orderDetailService) InsertDetail(orderDetailDto dto.OrderDetailInsertDt
 	orderDetail.OrderId = orderId
 	orderDetail.ProductId = orderDetailDto.ProductId
 	orderDetail.Quantity = orderDetailDto.Quantity
+	orderDetail.CurrencyId = "ARS"
 	orderDetail.Name = orderDetailDto.Name
 	orderDetail.Price = orderDetailDto.Price
 

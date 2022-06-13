@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
+import logo from "./images/home.svg"
 import Cookies from "universal-cookie";
 
 const Cookie = new Cookies();
@@ -79,6 +80,7 @@ function Login() {
   return (
 
     <div className="app">
+      <img src={logo} width="150px" height="150px" />
       <div className="login-form">
 
         {isSubmitted || Cookie.get("user_id") > -1 ? Cookie.get("username") : renderForm}

@@ -5,8 +5,11 @@ import (
 	service "mvc/services"
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
+
+//FUNCIONES PRODUCTOS
 
 func GetProductById(c *gin.Context) {
 	var productDto dto.ProductDto

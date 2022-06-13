@@ -1,13 +1,13 @@
 package db
 
 import (
-	cartClient "mvc/clients/cart"
 	categoryClient "mvc/clients/category"
 	orderClient "mvc/clients/order"
 	orderDetailClient "mvc/clients/order_detail"
 	productClient "mvc/clients/product"
 	userClient "mvc/clients/user"
 	"mvc/model"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	log "github.com/sirupsen/logrus"
@@ -19,7 +19,7 @@ var (
 )
 
 func init() {
-	//BASE DE DATOS
+	// BASE DE DATOS PERMISOS
 	DBName := "Proyecto"
 	DBUser := "root"
 	DBPass := ""
@@ -34,19 +34,18 @@ func init() {
 		log.Info("Connection Established")
 	}
 
-	//SE AGREGAN LOS CLIENTS
+	//CONEXION CON CLIENTS
 	userClient.Db = db
 	productClient.Db = db
 	orderClient.Db = db
 	orderDetailClient.Db = db
 	categoryClient.Db = db
-	cartClient.Db = db
 
 }
 
 func StartDbEngine() {
-	//CLASES
-	db.AutoMigrate(&model.User{}, &model.Product{}, &model.Order{}, &model.OrderDetail{}, &model.Category{}, &model.Cart{})
+	// CLASES
+	db.AutoMigrate(&model.User{}, &model.Product{}, &model.Order{}, &model.OrderDetail{}, &model.Category{})
 
-	log.Info("Finish Database Migration")
+	log.Info("Finishing Migration Database Tables")
 }

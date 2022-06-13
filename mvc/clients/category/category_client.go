@@ -8,6 +8,8 @@ import (
 
 var Db *gorm.DB
 
+//FUNCIONES PAGINACION POR CATEGORIA
+
 func GetCategoryById(id int) model.Category {
 	var category model.Category
 	Db.Where("category_id = ?", id).First(&category)
