@@ -1,13 +1,12 @@
 package orderDetailController
 
 import (
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 	"mvc/dto"
 	"net/http"
-)
 
-//FUNCIONES DETALLE DE ORDENES
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+)
 
 func GetOrderDetailById(c *gin.Context) {
 	log.Debug("Order Detail id: " + c.Param("id"))

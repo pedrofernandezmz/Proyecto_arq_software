@@ -13,12 +13,14 @@ var (
 func init() {
 	router = gin.Default()
 
-	router.Use(cors.Default()) //resuelve problema cors-policy
+	router.Use(cors.Default())
 }
 
 func StartRoute() {
 	mapUrls()
+
 	log.Info("Starting server...")
+
 	router.Run(":8080")
 
 }

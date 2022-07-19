@@ -168,7 +168,7 @@
 }
 
 .topnav .cartNumber{
-  color: rgb(255, 255, 0);
+  color: black;
   font-weight: bold;
   text-align:center;
   border: 2px solid rgb(0, 0, 0);
@@ -205,8 +205,6 @@
 
 @media screen and (max-width: 1400px){
   .product {
-    width: 100%;
-    min-height: 300px;
   }
 }
 
@@ -215,4 +213,29 @@
   vertical-align: middle;
   padding: 10px;
   filter: invert(83%) sepia(96%) saturate(0%) hue-rotate(30deg) brightness(111%) contrast(103%);
+}
+
+.categories {
+  text-align: center;
+  background-color: rgb(51, 51, 51);
+  padding-left: 300px;
+}
+
+.botoncats {
+  background-color: rgb(51, 51, 51);
+    border: none;
+    color: white;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 2px 2px;
+    cursor: pointer;
+    align-content: center;
+}
+
+.botoncats:hover {
+  background-color: rgb(95, 95, 95);
+  color: white;
 }

@@ -1,15 +1,19 @@
 package services
 
 import (
-	userClient "mvc/clients/user"
+	client "mvc/clients/user"
 	"mvc/dto"
 	"mvc/model"
 	e "mvc/utils/errors"
 
+	"github.com/golang-jwt/jwt"
+
 	log "github.com/sirupsen/logrus"
 )
 
-type userService struct{}
+type userService struct {
+	userClient client.UserClientInterface
+}
 
 type userServiceInterface interface {
 	GetUserById(id int) (dto.UserDto, e.ApiError)
@@ -22,16 +26,22 @@ var (
 	UserService userServiceInterface
 )
 
+func initUserService(userClient client.UserClientInterface) userServiceInterface {
+	service := new(userService)
+	service.userClient = userClient
+	return service
+}
+
 func init() {
-	UserService = &userService{}
+	UserService = initUserService(client.UserClient)
 }
 
 func (s *userService) GetUserById(id int) (dto.UserDto, e.ApiError) {
 
-	var user model.User = userClient.GetUserById(id)
+	var user model.User = s.userClient.GetUserById(id)
 	var userDto dto.UserDto
 
-	if user.UserId < 0 {
+	if user.UserId == 0 {
 		return userDto, e.NewBadRequestApiError("user not found")
 	}
 	userDto.FirstName = user.FirstName
@@ -43,7 +53,7 @@ func (s *userService) GetUserById(id int) (dto.UserDto, e.ApiError) {
 
 func (s *userService) GetUsers() (dto.UsersDto, e.ApiError) {
 
-	var users model.Users = userClient.GetUsers()
+	var users model.Users = s.userClient.GetUsers()
 	var usersDto dto.UsersDto
 
 	for _, user := range users {
@@ -68,7 +78,7 @@ func (s *userService) InsertUser(userDto dto.UserDto) (dto.UserDto, e.ApiError) 
 	user.Username = userDto.Username
 	user.Password = userDto.Password
 
-	user = userClient.InsertUser(user)
+	user = s.userClient.InsertUser(user)
 
 	userDto.UserId = user.UserId
 
@@ -78,18 +88,28 @@ func (s *userService) InsertUser(userDto dto.UserDto) (dto.UserDto, e.ApiError) 
 func (s *userService) Login(loginDto dto.LoginDto) (dto.LoginResponseDto, e.ApiError) {
 
 	var user model.User
-
-	user, err := userClient.GetUserByUsername(loginDto.Username)
-
+	user, err := s.userClient.GetUserByUsername(loginDto.Username)
 	var loginResponseDto dto.LoginResponseDto
 	loginResponseDto.UserId = -1
 	if err != nil {
 		return loginResponseDto, e.NewBadRequestApiError("Usuario no encontrado")
 	}
-	if user.Password != loginDto.Password {
+	if user.Password != loginDto.Password && loginDto.Username != "encrypted" {
 		return loginResponseDto, e.NewUnauthorizedApiError("Contraseña incorrecta")
 	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": loginDto.Username,
+		"pass":     loginDto.Password,
+	})
+	var jwtKey = []byte("secret_key")
+	tokenString, _ := token.SignedString(jwtKey)
+	if user.Password != tokenString && loginDto.Username == "encrypted" {
+		return loginResponseDto, e.NewUnauthorizedApiError("Contraseña incorrecta")
+	}
+
 	loginResponseDto.UserId = user.UserId
+	loginResponseDto.Token = tokenString
 	log.Debug(loginResponseDto)
 	return loginResponseDto, nil
 }

@@ -2,24 +2,41 @@ package category
 
 import (
 	"mvc/model"
+
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 )
 
 var Db *gorm.DB
 
-//FUNCIONES PAGINACION POR CATEGORIA
+type categoryClient struct{}
 
-func GetCategoryById(id int) model.Category {
+type CategoryClientInterface interface {
+	GetCategoryById(id int) model.Category
+	GetCategories() model.Categories
+}
+
+var (
+	CategoryClient CategoryClientInterface
+)
+
+func init() {
+	CategoryClient = &categoryClient{}
+}
+
+func (s *categoryClient) GetCategoryById(id int) model.Category {
 	var category model.Category
 	Db.Where("category_id = ?", id).First(&category)
 	log.Debug("Category: ", category)
+
 	return category
 }
 
-func GetCategories() model.Categories {
+func (s *categoryClient) GetCategories() model.Categories {
 	var categories model.Categories
 	Db.Find(&categories)
+
 	log.Debug("Categories: ", categories)
+
 	return categories
 }

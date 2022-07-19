@@ -9,8 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//FUNCIONES PRODUCTOS
-
 func GetProductById(c *gin.Context) {
 	var productDto dto.ProductDto
 	id, _ := strconv.Atoi(c.Param("product_id"))
@@ -27,7 +25,15 @@ func GetProductById(c *gin.Context) {
 func GetProducts(c *gin.Context) {
 
 	var productsDto dto.ProductsDto
-	productsDto, err := service.ProductService.GetProducts()
+	var err error
+
+	limit, ok := c.GetQuery("limit")
+	n, _ := strconv.Atoi(limit)
+	if ok {
+		productsDto, err = service.ProductService.GetNProducts(n)
+	} else {
+		productsDto, err = service.ProductService.GetProducts()
+	}
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
@@ -48,5 +54,22 @@ func GetProductsByCategoryId(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusOK, productsDto)
+}
+
+func GetProductsBySearch(c *gin.Context) {
+	var productsDto dto.ProductsDto
+	query := c.Param("searchQuery")
+	productsDto, err := service.ProductService.GetProductsBySearch(query)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if len(productsDto) == 0 {
+		c.JSON(http.StatusOK, []dto.ProductDto{})
+		return
+	}
 	c.JSON(http.StatusOK, productsDto)
 }

@@ -9,9 +9,23 @@ import (
 
 var Db *gorm.DB
 
-//FUNCIONES USUARIO
+type userClient struct{}
 
-func GetUserById(id int) model.User {
+type UserClientInterface interface {
+	GetUserById(id int) model.User
+	GetUsers() model.Users
+	GetUserByUsername(username string) (model.User, error)
+	InsertUser(user model.User) model.User
+}
+
+var (
+	UserClient UserClientInterface
+)
+
+func init() {
+	UserClient = &userClient{}
+}
+func (s *userClient) GetUserById(id int) model.User {
 	var user model.User
 	Db.Where("user_id = ?", id).First(&user)
 	log.Debug("User: ", user)
@@ -19,7 +33,7 @@ func GetUserById(id int) model.User {
 	return user
 }
 
-func GetUserByUsername(username string) (model.User, error) {
+func (s *userClient) GetUserByUsername(username string) (model.User, error) {
 	var user model.User
 	result := Db.Where("username = ?", username).First(&user)
 	if result.Error != nil {
@@ -29,7 +43,7 @@ func GetUserByUsername(username string) (model.User, error) {
 	return user, nil
 }
 
-func GetUsers() model.Users {
+func (s *userClient) GetUsers() model.Users {
 	var users model.Users
 	Db.Find(&users)
 
@@ -38,7 +52,7 @@ func GetUsers() model.Users {
 	return users
 }
 
-func InsertUser(user model.User) model.User {
+func (s *userClient) InsertUser(user model.User) model.User {
 	result := Db.Create(&user)
 
 	if result.Error != nil {

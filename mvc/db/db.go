@@ -19,11 +19,12 @@ var (
 )
 
 func init() {
-	// BASE DE DATOS PERMISOS
-	DBName := "Proyecto"
+	// DB Connections Paramters
+	DBName := "Pruebas"
 	DBUser := "root"
 	DBPass := ""
-	DBHost := "localhost"
+	DBHost := ""
+	// ------------------------
 
 	db, err = gorm.Open("mysql", DBUser+":"+DBPass+"@tcp("+DBHost+":3306)/"+DBName+"?charset=utf8&parseTime=True")
 
@@ -34,7 +35,7 @@ func init() {
 		log.Info("Connection Established")
 	}
 
-	//CONEXION CON CLIENTS
+	// We need to add all CLients that we build
 	userClient.Db = db
 	productClient.Db = db
 	orderClient.Db = db
@@ -44,7 +45,7 @@ func init() {
 }
 
 func StartDbEngine() {
-	// CLASES
+	// We need to migrate all classes model.
 	db.AutoMigrate(&model.User{}, &model.Product{}, &model.Order{}, &model.OrderDetail{}, &model.Category{})
 
 	log.Info("Finishing Migration Database Tables")

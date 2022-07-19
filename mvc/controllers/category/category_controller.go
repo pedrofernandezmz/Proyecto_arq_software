@@ -5,14 +5,16 @@ import (
 	service "mvc/services"
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
-//FUNCIONES CATEGORIA
-
 func GetCategoryById(c *gin.Context) {
 	log.Debug("Category id: " + c.Param("id"))
+
+	// Get Back User
+
 	id, _ := strconv.Atoi(c.Param("id"))
 	var categoryDto dto.CategoryDto
 	categoryDto, err := service.CategoryService.GetCategoryById(id)

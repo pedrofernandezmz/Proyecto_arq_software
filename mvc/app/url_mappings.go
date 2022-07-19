@@ -11,31 +11,32 @@ import (
 )
 
 func mapUrls() {
+	// Products Mapping
+	router.GET("/product/:product_id", productController.GetProductById)
+	router.GET("/products", productController.GetProducts)
+	router.GET("/products/:category_id", productController.GetProductsByCategoryId)
+	router.GET("/products/search=:searchQuery", productController.GetProductsBySearch)
 
-	// Login
-	router.POST("/login", userController.Login)
-
-	// Usuarios
+	// Users Mapping
 	router.GET("/user/:id", userController.GetUserById)
 	router.GET("/user", userController.GetUsers)
 	router.POST("/user", userController.UserInsert)
 
-	// Productos
-	router.GET("/product/:product_id", productController.GetProductById)
-	router.GET("/products", productController.GetProducts)
-	router.GET("/products/:category_id", productController.GetProductsByCategoryId)
-
-	// Ordenes
+	// Orders Mapping
 	router.GET("/order/:id", orderController.GetOrderById)
+	router.GET("/orders/:id", orderController.GetOrdersByUserId)
 	router.POST("/order", orderController.OrderInsert)
 
-	// Detalle Ordenes
+	// OrderDetails Mapping
 	router.GET("/orderDetail/:id", orderDetailController.GetOrderDetailById)
 	router.POST("/orderDetail", orderDetailController.OrderDetailInsert)
 
-	// Categorias
+	// Category Mapping
 	router.GET("/category/:id", categoryController.GetCategoryById)
 	router.GET("/categories", categoryController.GetCategories)
+
+	// Login Mapping
+	router.POST("/login", userController.Login)
 
 	log.Info("Finishing mappings configurations")
 }
