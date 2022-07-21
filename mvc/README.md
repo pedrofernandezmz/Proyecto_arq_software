@@ -1,1 +1,3 @@
-# Proyecto_arq_software
+# mvc-go
+Pasos para ejecutar.
+Terminal -> go run main.go

@@ -1,5 +1,12 @@
 # Proyecto_arq_software
 # Arquitectura de Software I - Integrador 2022
+
+# PASOS PARA EJECUTAR:
+- EN LA CARPETA DEL PROYECTO EJECUTAR:
+ docker compose up -d
+- PARA FINALIZAR:
+ docker compose down
+
 Como práctico integrador se solicita la creación de un carrito de compras web
 donde se destacan dos componentes a ser desarrollados.
 1. El backend, desarrollado en Golang, que brindara todas las interfaces
