@@ -496,7 +496,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `first_name`, `last_name`, `email`) VALUES
-(1, 'pedrofmz', 'cat123', 'Pedro', 'Fernandez', 'aaaa');
+(1, 'pedrofmz', 'cat123', 'Pedro', 'Fernandez', 'aaaa'),
+(2, 'tincholm', 'tincho123', 'Martin', 'Lescano', 'bbbb'),
+(3, 'gusti', 'gusti123', 'Gustavo', 'Schonfeld', 'cccc');
 
 --
 -- Índices para tablas volcadas
